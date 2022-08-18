@@ -6,8 +6,6 @@ const { Product, Category, Tag, ProductTag } = require('../../models');
 // get all products
 router.get('/', async (req, res) => {
   // find all products
-  //const { product_id } = req.params;
-
   try {
     const allProducts = await Product.findAll();
     res.status(200).send({ allProducts });
@@ -15,14 +13,28 @@ router.get('/', async (req, res) => {
     console.log('Error getting all products', err);
     res.status(400).send({ err });
   }
-
   // be sure to include its associated Category and Tag data
 });
 
 // get one product
-router.get('/:id', (req, res) => {
+router.get('/:id', async (req, res) => {
   // find a single product by its `id`
   // be sure to include its associated Category and Tag data
+  const { id } = req.params;
+
+  const sequelizeOptions = {
+    where: {
+      id,
+    },
+  };
+
+  try {
+    const oneProduct = await Product.findOne(sequelizeOptions);
+    res.status(200).send({ oneProduct });
+  } catch (err) {
+    console.log('Error getting that product', err);
+    res.status(400).send({ err });
+  }
 });
 
 // create new product
