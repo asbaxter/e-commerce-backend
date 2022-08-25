@@ -85,7 +85,7 @@ router.delete('/:id', async (req, res) => {
   };
 
   try {
-    const deleteTag = await Product.destroy(sequelizeOptions);
+    const deleteTag = await Tag.destroy(sequelizeOptions);
     res.status(200).send({ deleteTag });
   } catch (err) {
     console.log('Error deleting that tag', err);
