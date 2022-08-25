@@ -7,7 +7,9 @@ const { Product, Category, Tag, ProductTag } = require('../../models');
 router.get('/', async (req, res) => {
   // find all products
   try {
-    const allProducts = await Product.findAll();
+    const allProducts = await Product.findAll({
+      include: [{ model: Category }, { model: Tag }]
+    });
     res.status(200).send({ allProducts });
   } catch (err) {
     console.log('Error getting all products', err);
@@ -26,6 +28,9 @@ router.get('/:id', async (req, res) => {
     where: {
       id,
     },
+    include: 
+    [{ model: Category }, 
+      { model: Tag }]
   };
 
   try {
@@ -111,8 +116,23 @@ router.put('/:id', (req, res) => {
     });
 });
 
-router.delete('/:id', (req, res) => {
+router.delete('/:id', async (req, res) => {
   // delete one product by its `id` value
+  const { id } = req.params;
+
+  const sequelizeOptions = {
+    where: {
+      id,
+    },
+  };
+
+  try {
+    const deleteProduct = await Product.destroy(sequelizeOptions);
+    res.status(200).send({ deleteProduct });
+  } catch (err) {
+    console.log('Error getting that product', err);
+    res.status(400).send({ err });
+  }
 });
 
 module.exports = router;
